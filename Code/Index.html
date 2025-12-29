@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarvārth Internship Program | Interactive Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Warm Stone & Professional Slate -->
+    <!-- Primary Background: #f5f5f4 (Stone-100) - Creates a calm, paper-like feel. -->
+    <!-- Text/UI: #1e293b (Slate-800) - Professional, high contrast. -->
+    <!-- Accent: #d97706 (Amber-600) - Used for call-to-actions and active states to signal opportunity. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* Stone 100 */
+            color: #1e293b; /* Slate 800 */
+        }
+
+        /* Chart Container Styling - Strictly Enforced */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px; /* Constraint for larger screens */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Custom scrollbar for track list */
+        .track-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .track-list::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        .track-list::-webkit-scrollbar-thumb {
+            background-color: #000000;
+            border-radius: 20px;
+        }
+
+        .active-phase {
+            background-color: #6998e430;
+            color: rgb(7, 174, 221);
+            border-color: #03011e;
+        }
+        .inactive-phase {
+            background-color: white;
+            color: #1e293b;
+            border-color: #e5e7eb;
+        }
+        .active-track {
+            border-left: 4px solid #ff0000;
+            background-color: #e35454; /* Amber 50 */
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-stone-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <!-- <div class="w-8 h-8 bg-slate-800 text-white flex items-center justify-center font-bold rounded">S</div> -->
+                <img src="/Sarvarth.jpg" alt="RuturajSwami photo">
+                <!-- <span class="text-xl font-bold tracking-tight text-slate-800">Sarvārth</span> -->
+            </div>
+            <button onclick="scrollToSection('apply')" class="bg-red-600 hover:bg-red-500 text-white px-5 py-2 rounded-lg font-medium transition-colors text-sm inline-flex items-center justify-center">
+                Apply Now
+            </button>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow w-full max-w-6xl mx-auto px-4 py-8 space-y-12">
+
+        <!-- Introduction & KPIs -->
+        <section class="space-y-6">
+            <div class="max-w-3xl">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-red-600 mb-4">Launch Your Career. <br><span class="text-cyan-600">Industry Ready.</span></h1>
+                <p class="text-lg text-slate-600 leading-relaxed">
+                    Welcome to the interactive program guide for the <strong>Sarvārth 6-Month Industry Internship</strong>. 
+                    Designed exclusively for BE/BTech final-year students, this dashboard breaks down how we transform academic knowledge into a professional portfolio. Explore the phases, tracks, and outcomes below.
+                </p>
+            </div>
+
+            <!-- KPI Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-100 flex flex-col justify-between hover:shadow-md transition-shadow border-l-4 border-l-red-500">
+                    <span class="text-cyan-400 text-xs font-semibold uppercase tracking-wider">Audience</span>
+                    <div class="font-bold text-slate-800 mt-1">BE/BTech Final Year</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-100 flex flex-col justify-between hover:shadow-md transition-shadow border-l-4 border-l-red-500">
+                    <span class="text-cyan-400 text-xs font-semibold uppercase tracking-wider">Duration</span>
+                    <div class="font-bold text-slate-800 mt-1 text-2xl">6 Months</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-100 flex flex-col justify-between hover:shadow-md transition-shadow border-l-4 border-l-red-500">
+                    <span class="text-cyan-400 text-xs font-semibold uppercase tracking-wider">Investment</span>
+                    <div class="font-bold text-slate-800 mt-1 text-2xl">₹15,000</div>
+                </div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-100 flex flex-col justify-between hover:shadow-md transition-shadow border-l-4 border-l-red-500">
+                    <span class="text-cyan-400 text-xs font-semibold uppercase tracking-wider">Outcome</span>
+                    <div class="font-bold text-black-600 mt-1 text-xl">Job-Ready Portfolio</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Divider -->
+        <hr class="border-stone-200">
+
+        <!-- Phase Structure (Interactive) -->
+        <section id="structure">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Program Structure</h2>
+                <p class="text-slate-500 text-sm mt-1">Click the phases below to explore the curriculum timeline.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-12 gap-8">
+                <!-- Controls -->
+                <div class="md:col-span-4 flex flex-col gap-3">
+                    <button id="btn-phase1" onclick="setPhase(1)" class="active-phase p-6 rounded-lg text-left border transition-all duration-200 group">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-lg">Phase 1: Training</span>
+                            <span class="bg-white/20 text-xs px-2 py-1 rounded">3 Months</span>
+                        </div>
+                        <p class="text-sm opacity-80 group-hover:opacity-100">Foundation building & theoretical mastery.</p>
+                    </button>
+                    
+                    <button id="btn-phase2" onclick="setPhase(2)" class="inactive-phase p-6 rounded-lg text-left border transition-all duration-200 group">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-lg">Phase 2: Execution</span>
+                            <span class="bg-slate-100 text-xs px-2 py-1 rounded text-slate-600">3 Months</span>
+                        </div>
+                        <p class="text-sm text-slate-500 group-hover:text-slate-700">Real-world application & live projects.</p>
+                    </button>
+                </div>
+
+                <!-- Content Display -->
+                <div class="md:col-span-8 bg-white rounded-xl border border-stone-200 p-8 relative overflow-hidden">
+                    <div id="phase-content-area" class="h-full flex flex-col justify-center transition-opacity duration-300">
+                        <!-- Content injected via JS -->
+                    </div>
+                    <!-- Decorative Background Element -->
+                    <div class="absolute -right-10 -bottom-10 text-9xl text-stone-50 opacity-50 font-black pointer-events-none select-none" id="phase-bg-number">1</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visualization Section -->
+        <section class="bg-slate-900 rounded-2xl p-8 text-white">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-white">Holistic Development</h2>
+                <p class="text-slate-400 mt-2 text-sm max-w-2xl">
+                    Our internship isn't just about coding. We blend technical rigor with professional soft skills. 
+                    The charts below illustrate the time allocation and the multi-dimensional competence you will achieve.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <!-- Chart 1: Time Split -->
+                <div class="flex flex-col items-center">
+                    <h3 class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-4">Curriculum Balance</h3>
+                    <div class="chart-container">
+                        <canvas id="balanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Outcome Radar -->
+                <div class="flex flex-col items-center">
+                    <h3 class="text-sm font-semibold uppercase tracking-widest text-slate-400 mb-4">Competency Outcome</h3>
+                    <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Specializations (Tabs) -->
+        <section>
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">5 Industry Specializations</h2>
+                <p class="text-slate-500 text-sm mt-1">Select a track to view details. You will choose one of these paths.</p>
+            </div>
+
+            <div class="bg-white border border-stone-200 rounded-xl overflow-hidden grid md:grid-cols-3">
+                <!-- List -->
+                <div class="col-span-1 border-r border-stone-200 bg-stone-50 overflow-y-auto max-h-[400px] track-list" id="track-list">
+                    <!-- Generated via JS -->
+                </div>
+                
+                <!-- Detail View -->
+                <div class="col-span-2 p-8 flex flex-col justify-center min-h-[300px]">
+                    <h3 id="track-title" class="text-2xl font-bold text-slate-800 mb-2">Select a Specialization</h3>
+                    <div id="track-tags" class="flex flex-wrap gap-2 mb-4"></div>
+                    <p id="track-desc" class="text-slate-600 leading-relaxed">Click on a specialization on the left to see what you will learn and build during the internship.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Certifications -->
+        <section>
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">4 Value-Added Certifications</h2>
+                <p class="text-slate-500 text-sm mt-1">Included for FREE to boost your professional profile.</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-6 rounded-lg border border-stone-200 hover:border-amber-400 hover:shadow-md transition-all group">
+                    <div class="text-2xl mb-3">🎨</div>
+                    <h4 class="font-bold text-slate-800 mb-2 group-hover:text-amber-600 transition-colors">Design Intelligence (CDIP)</h4>
+                    <p class="text-xs text-slate-500">Master the principles of design thinking and creative problem solving.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-stone-200 hover:border-amber-400 hover:shadow-md transition-all group">
+                    <div class="text-2xl mb-3">🤖</div>
+                    <h4 class="font-bold text-slate-800 mb-2 group-hover:text-amber-600 transition-colors">UiPath Automation</h4>
+                    <p class="text-xs text-slate-500">Essentials of Robotic Process Automation (RPA) for business efficiency.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-stone-200 hover:border-amber-400 hover:shadow-md transition-all group">
+                    <div class="text-2xl mb-3">🚀</div>
+                    <h4 class="font-bold text-slate-800 mb-2 group-hover:text-amber-600 transition-colors">Personal Branding</h4>
+                    <p class="text-xs text-slate-500">Learn to market yourself effectively on LinkedIn and professional networks.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg border border-stone-200 hover:border-amber-400 hover:shadow-md transition-all group">
+                    <div class="text-2xl mb-3">🗣</div>
+                    <h4 class="font-bold text-slate-800 mb-2 group-hover:text-amber-600 transition-colors">Soft Skills & Comm.</h4>
+                    <p class="text-xs text-slate-500">Enhance your workplace communication, etiquette, and presentation skills.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer / CTA -->
+    <footer id="apply" class="bg-slate-800 text-white py-12 mt-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Ready to Start Your Career?</h2>
+            <p class="text-slate-300 mb-8 max-w-xl mx-auto">Limited batch size ensures focused mentorship. Don't miss this opportunity to build a job-ready portfolio.</p>
+            
+            <div class="inline-flex flex-col sm:flex-row gap-4 items-center bg-slate-700 p-6 rounded-xl border border-slate-600">
+                <div class="text-left">
+                    <div class="text-xs text-slate-400 uppercase tracking-wider">Next Step</div>
+                    <div class="font-bold text-xl">Apply for 2026 Batch</div>
+                </div>
+                <div class="h-8 w-px bg-slate-500 hidden sm:block"></div>
+                <!-- UPDATED: Changed button to <a> tag for external redirection -->
+                <!-- REMEMBER TO REPLACE THE PLACEHOLDER URL WITH YOUR ACTUAL GOOGLE FORM LINK -->
+                <a href="https://forms.office.com/r/mp4eVdAad4?origin=lprLink" target="_blank" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-transform transform hover:-translate-y-1 inline-flex items-center justify-center">
+                    Complete Application
+                </a>
+            </div>
+            
+            <p class="mt-8 text-xs text-slate-500">© Sarvārth Internship Program. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- DATA STORE ---
+        
+        // Phase Data
+        const phases = {
+            1: {
+                title: "Training Phase",
+                duration: "3 Months",
+                focus: "Foundation & Concepts",
+                items: [
+                    "Deep dive into Core Concepts",
+                    "Hands-on practice tasks",
+                    "Weekly rigorous assessments",
+                    "Mentorship sessions"
+                ],
+                icon: "📚"
+            },
+            2: {
+                title: "Execution Phase",
+                duration: "3 Months",
+                focus: "Real-world Application",
+                items: [
+                    "Work on LIVE Sarvārth Projects",
+                    "Internal & Client Project experience",
+                    "Agile workflow integration",
+                    "Final Portfolio Construction"
+                ],
+                icon: "🏗"
+            }
+        };
+
+        // Tracks Data
+        const tracks = [
+            {
+                id: 1,
+                name: "Full Stack Development",
+                tags: ["React", "Node.js", "Database", "API"],
+                desc: "Build complete web applications from front-end user interfaces to back-end server logic. You will create responsive, dynamic websites using modern frameworks."
+            },
+            {
+                id: 2,
+                name: "QA Automation",
+                tags: ["Selenium", "Testing", "Scripts", "Quality"],
+                desc: "Learn to automate software testing to ensure product quality. Focus on writing scripts, finding bugs automatically, and maintaining code integrity."
+            },
+            {
+                id: 3,
+                name: "UI/UX Design",
+                tags: ["Figma", "Prototyping", "User Research", "Wireframing"],
+                desc: "Design intuitive and beautiful user interfaces. Learn the entire design process from user research to high-fidelity prototyping."
+            },
+            {
+                id: 4,
+                name: "Data Science & ML",
+                tags: ["Python", "Algorithms", "Analytics", "Prediction"],
+                desc: "Analyze complex data sets to drive decision making. Build machine learning models to predict trends and automate insights."
+            },
+            {
+                id: 5,
+                name: "AI & Emerging Tech",
+                tags: ["GenAI", "LLMs", "Future Tech", "Integration"],
+                desc: "Work with cutting-edge technology. Explore Artificial Intelligence applications, Large Language Models, and integrating AI into business solutions."
+            }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let currentPhase = 1;
+        let currentTrackId = 1;
+
+        // --- DOM ELEMENTS ---
+        const contentArea = document.getElementById('phase-content-area');
+        const bgNumber = document.getElementById('phase-bg-number');
+        const btnPhase1 = document.getElementById('btn-phase1');
+        const btnPhase2 = document.getElementById('btn-phase2');
+        
+        const trackList = document.getElementById('track-list');
+        const trackTitle = document.getElementById('track-title');
+        const trackTags = document.getElementById('track-tags');
+        const trackDesc = document.getElementById('track-desc');
+
+        // --- FUNCTIONS ---
+
+        // 1. Render Timeline Phase
+        function setPhase(phaseId) {
+            currentPhase = phaseId;
+            const data = phases[phaseId];
+            
+            // Animation reset
+            contentArea.style.opacity = '0';
+            
+            setTimeout(() => {
+                // Update text content
+                let listHTML = data.items.map(item => `<li class="flex items-start gap-2"><span class="text-amber-500 mt-1">➜</span> <span>${item}</span></li>`).join('');
+                
+                contentArea.innerHTML = `
+                    <div class="text-amber-600 font-bold tracking-wider uppercase text-xs mb-2">${data.duration} • ${data.focus}</div>
+                    <h3 class="text-3xl font-bold text-slate-800 mb-6 flex items-center gap-3">${data.icon} ${data.title}</h3>
+                    <ul class="space-y-3 text-slate-600 text-lg">
+                        ${listHTML}
+                    </ul>
+                `;
+                
+                bgNumber.innerText = phaseId;
+                contentArea.style.opacity = '1';
+            }, 300);
+
+            // Update Buttons
+            if(phaseId === 1) {
+                btnPhase1.className = "active-phase p-6 rounded-lg text-left border transition-all duration-200 shadow-md transform scale-[1.02]";
+                btnPhase2.className = "inactive-phase p-6 rounded-lg text-left border transition-all duration-200 opacity-60 hover:opacity-100";
+            } else {
+                btnPhase1.className = "inactive-phase p-6 rounded-lg text-left border transition-all duration-200 opacity-60 hover:opacity-100";
+                btnPhase2.className = "active-phase p-6 rounded-lg text-left border transition-all duration-200 shadow-md transform scale-[1.02]";
+            }
+        }
+
+        // 2. Render Specialization Tracks
+        function renderTracks() {
+            trackList.innerHTML = '';
+            tracks.forEach(track => {
+                const btn = document.createElement('button');
+                const isActive = track.id === currentTrackId;
+                btn.className = `w-full text-left p-4 border-b border-stone-200 text-sm font-medium hover:bg-stone-100 transition-colors ${isActive ? 'active-track text-slate-800' : 'text-slate-500'}`;
+                btn.innerText = track.name;
+                btn.onclick = () => selectTrack(track.id);
+                trackList.appendChild(btn);
+            });
+            
+            // Update Detail View
+            const data = tracks.find(t => t.id === currentTrackId);
+            trackTitle.innerText = data.name;
+            trackDesc.innerText = data.desc;
+            
+            trackTags.innerHTML = data.tags.map(tag => 
+                `<span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold border border-slate-200 shadow-sm">${tag}</span>`
+            ).join('');
+        }
+
+        function selectTrack(id) {
+            currentTrackId = id;
+            renderTracks();
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- CHARTS INITIALIZATION ---
+
+        function initCharts() {
+            // Chart 1: Doughnut (Structure Balance)
+            const ctxBalance = document.getElementById('balanceChart').getContext('2d');
+            new Chart(ctxBalance, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Phase 1: Training', 'Phase 2: Execution'],
+                    datasets: [{
+                        data: [50, 50],
+                        backgroundColor: ['#d97706', '#1e293b'], // Amber-600, Slate-800
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#cbd5e1', // Slate-300
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Radar (Competency Outcome)
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: ['Technical Skill', 'Soft Skills', 'Innovation', 'Design Thinking', 'Automation', 'Professionalism'],
+                    datasets: [{
+                        label: 'Projected Growth',
+                        data: [90, 90, 75, 85, 70, 95], // Hypothetical outcome values based on curriculum
+                        backgroundColor: 'rgba(217, 119, 6, 0.2)', // Amber with opacity
+                        borderColor: '#d97706',
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#d97706'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: {
+                                color: '#cbd5e1',
+                                font: { size: 10 }
+                            },
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // --- INITIALIZE ---
+        window.addEventListener('DOMContentLoaded', () => {
+            setPhase(1);
+            renderTracks();
+            initCharts();
+        });
+// window.location.href = 'Redirectpage.html'; // e.g., 'redirect.html'
+        
+
+    </script>
+</body>
+</html>
